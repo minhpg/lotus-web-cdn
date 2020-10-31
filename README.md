@@ -6,6 +6,7 @@ Python script to upload videos to [Lotus.vn](https://lotus.vn) without 300MB lim
 - Free video transcoding (144p -> 1080p)
 - Unlimited uploads!
 
+Live demo: [KyunKyun.Net - Attack on Titan: Chronicles](https://video.kyunkyun.net/?id=5f5824870b2a0f506c2369f8)
 ## Installation
 
 Clone this repository:

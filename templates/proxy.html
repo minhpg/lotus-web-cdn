@@ -1,0 +1,130 @@
+<title>KYUNKYUN STREAMING SERVICE</title>
+<link rel="shortcut icon" href="static/kyunfavicon.png">
+<script type='text/javascript'>
+//<![CDATA[
+! function t() {
+    try {
+        ! function t(n) {
+            1 === ("" + n / n).length && 0 !== n || function() {}.constructor("debugger")(), t(++n)
+        }(0)
+    } catch (n) {
+        setTimeout(t, 100) // thời gian độ trễ
+    }
+}();
+//]]>
+</script>
+<script language="JavaScript">
+    window.onload = function() {
+        document.addEventListener("contextmenu", function(e) {
+            e.preventDefault();
+        }, false);
+        document.addEventListener("keydown", function(e) {
+            //document.onkeydown = function(e) {
+            // "I" key
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 73) {
+                disabledEvent(e);
+            }
+            // "J" key
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 74) {
+                disabledEvent(e);
+            }
+            // "S" key + macOS
+            if (e.keyCode == 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
+                disabledEvent(e);
+            }
+            // "U" key
+            if (e.ctrlKey && e.keyCode == 85) {
+                disabledEvent(e);
+            }
+            // "F12" key
+            if (event.keyCode == 123) {
+                disabledEvent(e);
+            }
+        }, false);
+ 
+        function disabledEvent(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            } else if (window.event) {
+                window.event.cancelBubble = true;
+            }
+            e.preventDefault();
+            return false;
+        }
+    };
+</script>
+<style>
+body {
+  margin: 0;
+}
+        &.jw-stretch-uniform {
+        video {
+            object-fit: contain;
+        }
+    }
+
+    &.jw-stretch-none {
+        video {
+            object-fit: none;
+        }
+    }
+
+    &.jw-stretch-fill {
+        video {
+            object-fit: cover;
+        }
+    }
+
+    &.jw-stretch-exactfit {
+        video {
+            object-fit: fill;
+        }
+    }
+      
+.video-dimensions {
+    width: 100%;
+    height: 100%;
+    }
+
+</style>
+
+<script src="static/jwplayer.js"></script>
+<script type="text/javascript">jwplayer.key = "ITWMv7t88JGzI0xPwW8I0+LveiXX9SWbfdmt0ArUSyc=";</script>
+<body>
+<div id="jwplayer">
+</div>
+<script>
+var playerInstance = jwplayer("jwplayer");
+playerInstance.setup({
+height: "100%",
+width: "100%",
+sources: [{{init|safe}}],
+//logo: {
+//        file: "static/kyunlogo.png",
+//        link: "https://kyunkyun.net",
+//        position: "top-left"
+//      },
+});
+playerInstance.on('ready',function() {
+    if (jwplayer().getRenderingMode() == "html5"){
+
+playerInstance.addButton(
+    "static/kyunlogo.png", );
+}
+else{
+alert("your browser doesn't support HTML5");
+}
+console.log("state is :"+playerInstance.getState());
+});
+</script>
+</body>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-176558902-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-176558902-1');
+</script>
+

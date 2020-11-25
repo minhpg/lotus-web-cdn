@@ -22,43 +22,6 @@ from bson.objectid import ObjectId
 from requests_toolbelt import MultipartEncoder
 import filetype
 
-def download_file_icq(url,fileid,size):   # Streaming, so we can iterate over the response.
-    response =requests.get(url, stream=True,verify=False)
-    total_size_in_bytes= int(size)
-    block_size = 1024*1024
-    progress_bar = tqdm(total=total_size_in_bytes, unit='iB', unit_scale=True)
-    with open(fileid, 'wb') as file:
-        for data in response.iter_content(block_size):
-            progress_bar.update(len(data))
-            file.write(data)
-    progress_bar.close()
-    if total_size_in_bytes != 0 and progress_bar.n != total_size_in_bytes:
-        print("ERROR, something went wrong")
-        os.remove(fileid)
-        return None
-    return fileid
-
-def icq_mongo(fileid):
-    icq_db = mongo.db.kyunkyun
-    query = icq_db.find_one({"drive":fileid})
-    if query:
-        if "icqstream" in query.keys():
-            TOKEN = "001.3617003158.0151996798:754693810"
-            bot = Bot(token=TOKEN)
-            try:
-                response = bot.get_file_info(query["icqstream"]).json()
-                print(response)
-                url = response["url"]
-                filesize = response["size"]
-                path = download_file_icq(url,fileid,filesize)
-                return path
-            except:
-                return None
-        else:
-            return None
-    else:
-        return None
-
 def getUserInfo():
     header={"Cookie":"_kh_d_guid=892466748f4544f5e6fcfea6074bf76b; lotus=CfDJ8Dq0dlIYuJNOgmJyXTgyxclwVdrWqIfgqvG-42_w84Nyx-9cLLKI_hhdtkOkvBFOkoh-OkHTb8FTkV0715e4AYup0EIL_hITIwxDPfUyBLyp0kXKz_xQkhR1lZl3HrepLWPfrpR5zpWFz9nOAoaKxXCMbfSvAw3Z_o2USsXzNYQlcPIcJZc2XMNbyERY02yx2R7C4seYq0LKhvHLqiSLukZE7A3gNdVjXOnzXe-vzjdrdXQhMuXcgHDbZzKGG6ZHVXJF_W_5k-OVB3_qAXOkDRF6n2WgXljTMUILlbk23sD_BKGB9DKw4ViDnveHJzpcf3Y-BA-wp14hRdeOp8RFsUYmqJEaDCXgB9uibtKjLeHWhfyifJRASWkD18Yg0DkDiSDNl2KwWgxPlZgJHPcZsxGVBtCo_J5DKQcPME-3r3cX7v_nFTCmb5IQbZsjp5_fKCbyBTJtoVWtG33hMMGw8oozxByYGe9YkUIlWljKog6OHwApz6fCC0HiNeHBPiAK3NBK6c_Wu9DAbN3pct3MFcC7EkUetp3ZrGft7qOiX4mMytWofr7wI4T4IUIA9PNDMDGE6WCqWxYvCp1EpV0uvlf4SNGWMp29XW8aJ3bm3JMu1mxHy7CA6F5IkpKkxddCvoYu6VLb3dPfHNJmEIdzHQf7OqxRU1vciUzvvHUU4suncQPcoqomnZq9Zoswf54N-eMXIPi28M_4KRzX8bNcAjN-uihmPITW3oMkPr2AA3QVEUlK3LDS8SZfPwCvZmnlGyJKmqQXnExQ3YoDkdWHpmg5BoXuD1Pr5LZpBKM5ORbcoZI2KagZj2JYVDCWAJx-5xCBmg5qdQbKlgqdZPFx8VHeiV9q3nz_KhFHYgqiT8t93EaW4pPPnZonVeXqCapugWX_g_Km1nxrcJIVDqTVuQXyEXVriY2haIpwDszt1zA__xvXnw2mBzIiNszzblbaJy3bXzGSeTYUiV2MO5ExOf-xnZH1uxwr1OR7Ry4U0BZJz4tP9kVhaGQcR3suhzuekoxdfm3-sRcqiic_QUiHQvVFpzTNgvmEp-PnceN6301HQA7Eo4W8xMlTymUBsrZlBytJlIC_uXTWUq_ULEcNmMveWX30DWxyt0WuH3jDqm34py8AC7D5pK4Ih0URPa5nVxh1xW6UY16nOQ0aYCJPVvb-_9QK4TxoevPtMzSmxf1XL1BnD0aFQt8HzSyvp3frvojcySKC7hZfD6Pa7miV_V3Y6-TRM4wbYOV4UKHX39PVM2DmLuHv-zTHcMrQbAFW_xMMXRYyu4RM_QzjUXAZqhq5_G5TFbaYuIdYRIb3xu69EirqOqwnNATS_4w_tPZ9Hlf1yI_to1i4ZnjKvHmLtpcdXdshCRuh03qXfwwkYNsf_6j8G7i7b3DFaFGpHHpJ_9M5vmQ52PT-liztubVZa0bcR1NElfdnoZV3kTx8ocA8IXXXUwl35ztr_Ybo3e-mBf1LBZ3gh98zEad8M6lYxORNkJ8LQtAvHgV-xm-eWWtafpTWVtekRb42tRINnibbP_0gKeFJxe6hX2oh4Sqf9WISB67isnFWXULTwurC6YkcqkHXoh0n_F9GxujwUZ_CMDUIjWspozPS3uNdL-EL6YiF9p5P7QkvXVht0NbkzrXq; _lt_sd=PwdfIiFSBSsbFh4VKQk8UDlRRGtFKFElQD8FWRM/PBEYWxxzS0RXJlgECgtnbHATeBYTIgIUaTldUlFbcWJiBWQCX2JXVAZgDkFYQXN0fhMnURUiDglYOV1SUVsjMGICZgJTYgYHAGlfFAlMdW4zBTUDAjdRVwcxXEZcQHVmYgFkBVFjAgcGZQhHXB1nKw==; __admUTMtime=1598859448; _kh_t_e_a_s=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnYXRld2F5MSIsImF1ZCI6WyJ3ZWJraW5naHViIiwid2Via2luZ2h1YiJdLCJyb2xlIjoibWVtYmVyIiwiZXhwIjoxNTk4ODYwMDczLCJpYXQiOiIyMDIwLTA4LTMxIDE0OjM3In0.glZaFd_fcxlRQKPNt4EvewRhyfInMgHxYksy2BAtaGM"}
     response = requests.post("https://lotus.vn/w/authenticate/getuserinfo",headers=header)
@@ -256,10 +219,10 @@ def generate(link):
     return cdn+"\n"
 
 main = Flask(__name__) #setup vaariables
-main.config["MONGO_URI"] = "mongodb+srv://admin:SRwiE3Bd5ydzXIQN@cluster0-lqumo.mongodb.net/icqpublic?retryWrites=true&w=majority"
-main.config["CELERY_RESULT_BACKEND"] = "mongodb+srv://admin:SRwiE3Bd5ydzXIQN@cluster0-lqumo.mongodb.net/worker?retryWrites=true&w=majority"
+main.config["MONGO_URI"] = 
+main.config["CELERY_RESULT_BACKEND"] = 
 main.config["CELERY_BROKER_URL"]="amqp://localhost//"
-main.config["SECRET_KEY"] = "04082004"
+main.config["SECRET_KEY"] = 
 method_requests_mapping = {
     'GET': requests.get,
     'HEAD': requests.head,
